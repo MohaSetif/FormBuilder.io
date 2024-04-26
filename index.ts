@@ -5,12 +5,12 @@ import { parsePrismaSchema } from "./utils/prismaParser";
 const schemaFilePath = './prisma/User.prisma';
 const models = parsePrismaSchema(schemaFilePath);
 
-models.forEach(model => {
-    console.log(`Model: ${model.name}`);
-    model.attributes.forEach(attribute => {
-        console.log(`- Attribute: ${attribute.name}, Type: ${attribute.type}`);
-    });
-    console.log('\n');
-});
+// models.forEach(model => {
+//     console.log(`Model: ${model.name}`);
+//     model.attributes.forEach(attribute => {
+//         console.log(`- Attribute: ${attribute.name}, Type: ${attribute.type}`);
+//     });
+//     console.log('\n');
+// });
 
 createForm(models)

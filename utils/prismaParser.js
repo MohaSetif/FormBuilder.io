@@ -28,8 +28,11 @@ function parsePrismaSchema(filePath) {
         else if (!trimmed_line.startsWith('//') && currentModel && isInside && trimmed_line) {
             var attribute_line = trimmed_line.replace(/[{?}]/g, '');
             var _a = attribute_line.split(/\s+/), attribute_name = _a[0], attribute_type = _a[1];
+            var first_letter = attribute_name.charAt(0).toUpperCase();
+            var remaining_letters = attribute_name.slice(1);
+            var new_attribute_name = first_letter + remaining_letters;
             currentModel.attributes.push({
-                name: attribute_name,
+                name: new_attribute_name,
                 type: attribute_type
             });
         }
