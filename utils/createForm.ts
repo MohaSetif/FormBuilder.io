@@ -8,6 +8,7 @@ export const createForm = (models) => {
 
         models.forEach(model => {
             html += '\n'
+            html += '\t'
             html += `<h2>Model: ${model.name}</h2>`;
             model.attributes.forEach(attribute => {
               const label = attribute.name;
@@ -24,6 +25,7 @@ export const createForm = (models) => {
               html += '\n'
               html += '\t'
               html += `<input type="${htmlType}" name="${label}">`;
+              html += '\n'
               html += '\n'
             });
           });

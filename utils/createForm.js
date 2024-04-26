@@ -7,6 +7,7 @@ var createForm = function (models) {
     var html = "<!DOCTYPE html>\n    <html lang=\"en\">\n        <form method='post' action=''>";
     models.forEach(function (model) {
         html += '\n';
+        html += '\t';
         html += "<h2>Model: ".concat(model.name, "</h2>");
         model.attributes.forEach(function (attribute) {
             var label = attribute.name;
@@ -23,6 +24,7 @@ var createForm = function (models) {
             html += '\n';
             html += '\t';
             html += "<input type=\"".concat(htmlType, "\" name=\"").concat(label, "\">");
+            html += '\n';
             html += '\n';
         });
     });

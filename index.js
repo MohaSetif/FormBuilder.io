@@ -11,4 +11,4 @@ models.forEach(function (model) {
     });
     console.log('\n');
 });
-var prismaForm = (0, createForm_1.createForm)(models);
+(0, createForm_1.createForm)(models);

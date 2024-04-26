@@ -13,4 +13,4 @@ models.forEach(model => {
     console.log('\n');
 });
 
-const prismaForm = createForm(models)
+createForm(models)
