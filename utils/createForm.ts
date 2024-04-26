@@ -19,14 +19,23 @@ export const createForm = (models) => {
                 DateTime: "date",
                 Boolean: "checkbox",
               };
-              const htmlType = typeMap[attribute.type] || "text";
-              html += '\t'
-              html += `<label for="${label}">${label}:</label>`;
-              html += '\n'
-              html += '\t'
-              html += `<input type="${htmlType}" name="${label}">`;
-              html += '\n'
-              html += '\n'
+              const htmlType = typeMap[attribute.type];
+              const shouldIgnoreCreation : Boolean = /^(created)?at$/i.test(attribute.name);
+              const shouldIgnoreUpdate : Boolean = /^(updated)?at$/i.test(attribute.name);
+              if(!shouldIgnoreCreation && !shouldIgnoreUpdate)
+                {
+                  if(typeMap[attribute.type])
+                    {
+                      html += '\n'
+                      html += '\t'
+                      html += `<label for="${label}">${label}:</label>`;
+                      html += '\n'
+                      html += '\t'
+                      html += `<input type="${htmlType}" name="${label}" />`;
+                      html += '\n'
+                      html += '\n'
+                    }
+                }
             });
           });
 
@@ -36,6 +45,4 @@ export const createForm = (models) => {
     const outputFilePath = path.join('.', 'form.html');
     fs.writeFileSync(outputFilePath, html);
     console.log(`Generated HTML form saved to: ${outputFilePath}`);
-    console.log("lol");
-    
 }

@@ -18,14 +18,21 @@ var createForm = function (models) {
                 DateTime: "date",
                 Boolean: "checkbox",
             };
-            var htmlType = typeMap[attribute.type] || "text";
-            html += '\t';
-            html += "<label for=\"".concat(label, "\">").concat(label, ":</label>");
-            html += '\n';
-            html += '\t';
-            html += "<input type=\"".concat(htmlType, "\" name=\"").concat(label, "\">");
-            html += '\n';
-            html += '\n';
+            var htmlType = typeMap[attribute.type];
+            var shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
+            var shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
+            if (!shouldIgnoreCreation && !shouldIgnoreUpdate) {
+                if (typeMap[attribute.type]) {
+                    html += '\n';
+                    html += '\t';
+                    html += "<label for=\"".concat(label, "\">").concat(label, ":</label>");
+                    html += '\n';
+                    html += '\t';
+                    html += "<input type=\"".concat(htmlType, "\" name=\"").concat(label, "\" />");
+                    html += '\n';
+                    html += '\n';
+                }
+            }
         });
     });
     html += "</form>\n    </html>";
