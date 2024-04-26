@@ -8,7 +8,7 @@ export const createForm = (models) => {
 
         models.forEach(model => {
             html += '\n'
-            html += '\t'
+            html += '\t';
             html += `<h2>Model: ${model.name}</h2>`;
             model.attributes.forEach(attribute => {
               const label = attribute.name;
@@ -36,4 +36,6 @@ export const createForm = (models) => {
     const outputFilePath = path.join('.', 'form.html');
     fs.writeFileSync(outputFilePath, html);
     console.log(`Generated HTML form saved to: ${outputFilePath}`);
+    console.log("lol");
+    
 }
