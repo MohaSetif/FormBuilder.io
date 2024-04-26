@@ -11,7 +11,6 @@ models.forEach(model => {
         console.log(`- Attribute: ${attribute.name}, Type: ${attribute.type}`);
     });
     console.log('\n');
-    console.log(5);
 });
 
 createForm(models)
