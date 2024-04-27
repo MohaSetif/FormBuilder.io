@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var createForm_1 = require("./utils/createForm");
+var createReactForm_1 = require("./utils/createReactForm");
 var prismaParser_1 = require("./utils/prismaParser");
 var schemaFilePath = './prisma/User.prisma';
 var models = (0, prismaParser_1.parsePrismaSchema)(schemaFilePath);
@@ -11,4 +11,4 @@ var models = (0, prismaParser_1.parsePrismaSchema)(schemaFilePath);
 //     });
 //     console.log('\n');
 // });
-(0, createForm_1.createForm)(models);
+(0, createReactForm_1.createReactForm)(models);

@@ -1,4 +1,5 @@
 import { createForm } from "./utils/createForm";
+import { createReactForm } from "./utils/createReactForm";
 import { parsePrismaSchema } from "./utils/prismaParser";
 
 
@@ -13,4 +14,4 @@ const models = parsePrismaSchema(schemaFilePath);
 //     console.log('\n');
 // });
 
-createForm(models)
+createReactForm(models)
