@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createReactForm = void 0;
+exports.createReactForm_ts = void 0;
 var path = require("path");
 var fs = require("fs");
-var createReactForm = function (models) {
+var createReactForm_ts = function (models) {
     var html = "import React, { useState } from 'react';\n\nconst RegistrationForm = () => {\n    ";
     var processedAttributes = new Set();
     models.forEach(function (model) {
@@ -15,6 +15,13 @@ var createReactForm = function (models) {
                 DateTime: "datetime-local",
                 Boolean: "checkbox",
             };
+            var typeMap_ts = {
+                String: "string",
+                Int: "number",
+                Float: "number",
+                DateTime: "string",
+                Boolean: "boolean",
+            };
             var shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
             var shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
             if (!shouldIgnoreCreation && !shouldIgnoreUpdate && !processedAttributes.has(attribute.name)) {
@@ -22,12 +29,12 @@ var createReactForm = function (models) {
                 var remaining_letters = attribute.name.slice(1);
                 var new_attribute_name = first_letter + remaining_letters;
                 html += '\t\t';
-                html += "const [".concat(attribute.name, ", set").concat(new_attribute_name, "] = useState(").concat(typeMap[attribute.type] === 'number' ? 0 : "''", ");\n");
+                html += "const [".concat(attribute.name, ", set").concat(new_attribute_name, "] = useState<").concat(typeMap_ts[attribute.type], ">(").concat(typeMap[attribute.type] === 'number' ? 0 : "''", ");\n");
                 processedAttributes.add(attribute.name);
             }
         });
     });
-    html += "\n    const handleSubmit = async (e) => {\n        e.preventDefault();\n    \n        const response = await fetch('https://example.com/api/register', {\n          method: 'POST',\n          headers: {\n            'Content-Type': 'application/json',\n          },\n          body: JSON.stringify({";
+    html += "\n    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {\n        e.preventDefault();\n    \n        const response = await fetch('https://example.com/api/register', {\n          method: 'POST',\n          headers: {\n            'Content-Type': 'application/json',\n          },\n          body: JSON.stringify({";
     models.forEach(function (model, index) {
         html += '\n';
         model.attributes.forEach(function (attribute, idx) {
@@ -60,8 +67,8 @@ var createReactForm = function (models) {
         });
     });
     html += "\n          <button type=\"submit\">Register</button>\n        </form>\n      </div>\n    );\n};\n\nexport default RegistrationForm;\n";
-    var outputFilePath = path.join('.', 'Form.jsx'); //Let the user choose his form file
+    var outputFilePath = path.join('.', 'Form.tsx'); //Let the user choose his form file
     fs.writeFileSync(outputFilePath, html);
     console.log("Generated HTML form saved to: ".concat(outputFilePath));
 };
-exports.createReactForm = createReactForm;
+exports.createReactForm_ts = createReactForm_ts;
