@@ -1,6 +1,5 @@
-import { createForm } from "./utils/createForm";
-import { createReactForm } from "./utils/createReactForm";
-import { createReactForm_ts } from "./utils/createReactForm_ts";
+import { createSvelteForm } from "./utils/Svelte/createSvelteForm";
+import { createVueForm } from "./utils/Vue/createVueForm";
 import { parsePrismaSchema } from "./utils/prismaParser";
 
 
@@ -15,4 +14,4 @@ const models = parsePrismaSchema(schemaFilePath);
 //     console.log('\n');
 // });
 
-createReactForm_ts(models)
+createSvelteForm(models)

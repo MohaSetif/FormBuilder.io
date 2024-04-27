@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from 'fs';
 
-export const createReactForm_ts = (models) => {
+export const createReactForm = (models) => {
     let html = `import React, { useState } from 'react';
 
 const RegistrationForm = () => {
@@ -19,14 +19,6 @@ const RegistrationForm = () => {
                 Boolean: "checkbox",
             };
 
-            const typeMap_ts: { [key: string]: string } = {
-                String: "string",
-                Int: "number",
-                Float: "number",
-                DateTime: "string",
-                Boolean: "boolean",
-            };
-
             const shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
             const shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
 
@@ -35,7 +27,7 @@ const RegistrationForm = () => {
                 const remaining_letters = attribute.name.slice(1)
                 const new_attribute_name = first_letter + remaining_letters
                 html += '\t\t'
-                html += `const [${attribute.name}, set${new_attribute_name}] = useState<${typeMap_ts[attribute.type]}>(${typeMap[attribute.type] === 'number' ? 0 : "''"});\n`;
+                html += `const [${attribute.name}, set${new_attribute_name}] = useState(${typeMap[attribute.type] === 'number' ? 0 : "''"});\n`;
 
                 processedAttributes.add(attribute.name);
             }
@@ -43,7 +35,7 @@ const RegistrationForm = () => {
     });
 
     html += `
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
     
         const response = await fetch('https://example.com/api/register', {
@@ -122,7 +114,7 @@ const RegistrationForm = () => {
 export default RegistrationForm;
 `;
 
-    const outputFilePath = path.join('.', 'Form.tsx'); //Let the user choose his form file
+    const outputFilePath = path.join('.', 'Form.jsx'); //Let the user choose his form file
     fs.writeFileSync(outputFilePath, html);
-    console.log(`Generated HTML form saved to: ${outputFilePath}`);
+    console.log(`Generated React form saved to: ${outputFilePath}`);
 }
