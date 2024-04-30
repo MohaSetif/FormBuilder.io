@@ -51,7 +51,8 @@ export const createVueForm = (models) => {
             const shouldIgnoreUpdate : Boolean = /^(updated)?at$/i.test(attribute.name);
 
             if (!shouldIgnoreCreation && !shouldIgnoreUpdate) {
-                html += `\n                ${attribute.name}: '',`;
+                html += `\n                
+                ${attribute.name}: '',`;
             }
         });
     });

@@ -34,7 +34,7 @@ var createVueForm = function (models) {
             var shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
             var shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
             if (!shouldIgnoreCreation && !shouldIgnoreUpdate) {
-                html += "\n                ".concat(attribute.name, ": '',");
+                html += "\n                \n                ".concat(attribute.name, ": '',");
             }
         });
     });
