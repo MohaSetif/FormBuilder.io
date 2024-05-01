@@ -1,46 +1,78 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSvelteForm = void 0;
-var path = require("path");
-var fs = require("fs");
-var createSvelteForm = function (models) {
-    var html = "<script>\n    ";
-    models.forEach(function (model) {
-        model.attributes.forEach(function (attribute) {
-            html += "let ".concat(attribute.name, " = ");
-            var typeMap = {
+import * as path from "path";
+import * as fs from 'fs';
+
+const createSvelteForm = (models, form) => {
+    let html = `<script>
+    `;
+
+    models.forEach(model => {
+        model.attributes.forEach(attribute => {
+            html += `let ${attribute.name} = `;
+            const typeMap = {
                 String: "''",
                 Int: "0",
                 Float: "0.0",
                 DateTime: "new Date()",
                 Boolean: "false",
             };
+
             html += typeMap[attribute.type];
-            html += ";\n";
+            html += `;\n`;
         });
     });
-    html += "\n    const handleSubmit = async () => {\n      const response = await fetch('https://example.com/api/register', {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({";
-    models.forEach(function (model, index) {
-        model.attributes.forEach(function (attribute, idx) {
-            html += "".concat(attribute.name);
+
+    html += `
+    const handleSubmit = async () => {
+      const response = await fetch('https://example.com/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({`;
+
+    models.forEach((model, index) => {
+        model.attributes.forEach((attribute, idx) => {
+            html += `${attribute.name}`;
+
             if (index !== models.length - 1 || idx !== model.attributes.length - 1) {
                 html += ', ';
             }
         });
     });
-    html += "}),\n      });\n  \n      if (response.ok) {\n        alert('Registration successful!');\n      } else {\n        alert('Registration failed. Please try again.');\n      }\n    };\n  </script>\n  \n  <main>\n    <h1>Registration Form</h1>\n    <form on:submit|preventDefault={handleSubmit}>";
-    models.forEach(function (model) {
-        model.attributes.forEach(function (attribute) {
-            html += "\n      <label>\n        ".concat(attribute.name, ":\n        <input bind:value={").concat(attribute.name, "} type=\"").concat(attribute.type === 'Boolean' ? 'checkbox' : attribute.type.toLowerCase(), "\" ");
+
+    html += `}),
+      });
+  
+      if (response.ok) {
+        alert('Registration successful!');
+      } else {
+        alert('Registration failed. Please try again.');
+      }
+    };
+  </script>
+  
+  <main>
+    <h1>Registration Form</h1>
+    <form on:submit|preventDefault={handleSubmit}>`;
+
+    models.forEach(model => {
+        model.attributes.forEach(attribute => {
+            html += `\n      <label>\n        ${attribute.name}:\n        <input bind:value={${attribute.name}} type="${attribute.type === 'Boolean' ? 'checkbox' : attribute.type.toLowerCase()}" `;
             if (attribute.type === 'Boolean') {
-                html += "checked=\"{".concat(attribute.name, "}\" ");
+                html += `checked="{${attribute.name}}" `;
             }
-            html += "required />\n      </label>";
+            html += `required />\n      </label>`;
         });
     });
-    html += "\n      <button type=\"submit\">Register</button>\n    </form>\n  </main>";
-    var outputFilePath = path.join('.', 'form.svelte');
+
+    html += `
+      <button type="submit">Register</button>
+    </form>
+  </main>`;
+
+    const outputFilePath = path.join('.', `${form}.svelte`);
     fs.writeFileSync(outputFilePath, html);
-    console.log("Generated Svelte form saved to: ".concat(outputFilePath));
-};
-exports.createSvelteForm = createSvelteForm;
+    console.log(`Generated Svelte form saved to: ${outputFilePath}`);
+}
+
+export default createSvelteForm;

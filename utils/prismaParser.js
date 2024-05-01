@@ -1,45 +1,46 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.parsePrismaSchema = void 0;
-var fs = require("fs");
+import * as fs from 'fs';
+
 function parsePrismaSchema(filePath) {
-    var schema = fs.readFileSync(filePath, 'utf-8');
-    var models = [];
-    var currentModel = null;
-    var lines = schema.split('\n');
-    var isInside = false;
-    for (var _i = 0, lines_1 = lines; _i < lines_1.length; _i++) {
-        var line = lines_1[_i];
-        var trimmed_line = line.trim();
-        if (trimmed_line.startsWith('model ')) {
+    const schema = fs.readFileSync(filePath, 'utf-8')
+    const models = []
+    let currentModel = null;
+    const lines = schema.split('\n')
+    let isInside = false;
+
+    for(let line of lines){
+        const trimmed_line = line.trim();
+        if(trimmed_line.startsWith('model ')){
             if (currentModel !== null) {
                 models.push(currentModel);
             }
-            var modelName = trimmed_line.split(' ')[1];
+            const modelName = trimmed_line.split(' ')[1];
             currentModel = {
                 name: modelName,
                 attributes: []
-            };
+            }
             isInside = true;
         }
-        else if (trimmed_line == '}' && isInside) {
-            isInside = false;
+        else if(trimmed_line == '}' && isInside){
+            isInside = false
         }
-        else if (!trimmed_line.startsWith('//') && currentModel && isInside && trimmed_line) {
-            var attribute_line = trimmed_line.replace(/[{?}]/g, '');
-            var _a = attribute_line.split(/\s+/), attribute_name = _a[0], attribute_type = _a[1];
+        else if(!trimmed_line.startsWith('//') && currentModel && isInside && trimmed_line){
+            const attribute_line = trimmed_line.replace(/[{?}]/g, '')
+            const [attribute_name, attribute_type] = attribute_line.split(/\s+/);
             // const first_letter = attribute_name.charAt(0).toUpperCase()
             // const remaining_letters = attribute_name.slice(1)
             // const new_attribute_name = first_letter + remaining_letters
             currentModel.attributes.push({
                 name: attribute_name,
                 type: attribute_type
-            });
+            })
         }
     }
-    if (currentModel != null) {
-        models.push(currentModel);
+
+    if(currentModel != null){
+        models.push(currentModel)
     }
-    return models;
+
+    return models
 }
-exports.parsePrismaSchema = parsePrismaSchema;
+
+export default parsePrismaSchema;

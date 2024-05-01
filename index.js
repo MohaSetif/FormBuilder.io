@@ -3,6 +3,11 @@
 import inquirer from 'inquirer'
 import boxen from 'boxen'
 import figlet from 'figlet'
+import parsePrismaSchema from './utils/prismaParser.js'
+import createReactForm from './utils/React/createReactForm.js'
+import createReactForm_ts from './utils/React/createReactForm_ts.js'
+import createVueForm from './utils/Vue/createVueForm.js'
+import createSvelteForm from './utils/Svelte/createSvelteForm.js'
 
 const sleep = (ms = 2000) => new Promise((r) => setTimeout(r, ms))
 
@@ -45,7 +50,18 @@ async function getSchema() {
 
 async function main() {
     await sleep()
-    await getSchema()
+    const answers = await getSchema()
+    const models = parsePrismaSchema(answers.schema_path)
+    if(answers.frmwork_dev === 'React'){
+        if(answers.frmwork_lang === 'JavaScript') createReactForm(models, answers.form_dest)
+        else createReactForm_ts(models, answers.form_dest)
+    }
+    else if(answers.frmwork_dev === 'Vue'){
+        createVueForm(models, answers.form_dest)
+    }
+    else{
+        createSvelteForm(models, answers.form_dest)
+    }
     console.log(boxen('You have now generated your form successfully!', 
     {title: 'Congrats', titleAlignment: 'center', padding: 1, borderColor: 'cyan'}))
 }

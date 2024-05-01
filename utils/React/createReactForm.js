@@ -1,67 +1,122 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createReactForm = void 0;
-var path = require("path");
-var fs = require("fs");
-var createReactForm = function (models) {
-    var html = "import React, { useState } from 'react';\n\nconst RegistrationForm = () => {\n    ";
-    var processedAttributes = new Set();
-    models.forEach(function (model) {
-        model.attributes.forEach(function (attribute) {
-            var typeMap = {
+import * as path from "path";
+import * as fs from 'fs';
+
+const createReactForm = (models, form) => {
+    let html = `import React, { useState } from 'react';
+
+const RegistrationForm = () => {
+    `;
+    
+    const processedAttributes = new Set();
+
+    models.forEach(model => {
+        model.attributes.forEach(attribute => {
+            const typeMap = {
                 String: "text",
                 Int: "number",
                 Float: "number",
                 DateTime: "datetime-local",
                 Boolean: "checkbox",
             };
-            var shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
-            var shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
+
+            const shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
+            const shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
+
             if (!shouldIgnoreCreation && !shouldIgnoreUpdate && !processedAttributes.has(attribute.name)) {
-                var first_letter = attribute.name.charAt(0).toUpperCase();
-                var remaining_letters = attribute.name.slice(1);
-                var new_attribute_name = first_letter + remaining_letters;
-                html += '\t\t';
-                html += "const [".concat(attribute.name, ", set").concat(new_attribute_name, "] = useState(").concat(typeMap[attribute.type] === 'number' ? 0 : "''", ");\n");
+                const first_letter = attribute.name.charAt(0).toUpperCase()
+                const remaining_letters = attribute.name.slice(1)
+                const new_attribute_name = first_letter + remaining_letters
+                html += '\t\t'
+                html += `const [${attribute.name}, set${new_attribute_name}] = useState(${typeMap[attribute.type] === 'number' ? 0 : "''"});\n`;
+
                 processedAttributes.add(attribute.name);
             }
         });
     });
-    html += "\n    const handleSubmit = async (e) => {\n        e.preventDefault();\n    \n        const response = await fetch('https://example.com/api/register', {\n          method: 'POST',\n          headers: {\n            'Content-Type': 'application/json',\n          },\n          body: JSON.stringify({";
-    models.forEach(function (model, index) {
-        html += '\n';
-        model.attributes.forEach(function (attribute, idx) {
-            html += '\t\t\t\t\t\t\t';
-            html += "".concat(attribute.name, ": ").concat(attribute.name);
+
+    html += `
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        const response = await fetch('https://example.com/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({`;
+
+    models.forEach((model, index) => {
+        html += '\n'
+        model.attributes.forEach((attribute, idx) => {
+            html += '\t\t\t\t\t\t\t'
+            html += `${attribute.name}: ${attribute.name}`;
+
             if (index !== models.length - 1 || idx !== model.attributes.length - 1) {
                 html += ',';
-                html += '\n';
+                html += '\n'
             }
         });
     });
-    html += "\n            }),\n        });\n    \n        if (response.ok) {\n          alert('Registration successful!');\n        } else {\n          alert('Registration failed. Please try again.');\n        }\n      };\n\n    return (\n      <div>\n        <h1>Registration Form</h1>\n        <form onSubmit={handleSubmit}>\n    ";
-    models.forEach(function (model) {
-        model.attributes.forEach(function (attribute) {
-            var typeMap = {
+
+    html += `
+            }),
+        });
+    
+        if (response.ok) {
+          alert('Registration successful!');
+        } else {
+          alert('Registration failed. Please try again.');
+        }
+      };
+
+    return (
+      <div>
+        <h1>Registration Form</h1>
+        <form onSubmit={handleSubmit}>
+    `;
+
+    models.forEach(model => {
+        model.attributes.forEach(attribute => {
+            const typeMap = {
                 String: "text",
                 Int: "number",
                 Float: "number",
                 DateTime: "datetime-local",
                 Boolean: "checkbox",
             };
-            var shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
-            var shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
+
+            const shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
+            const shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
+
             if (!shouldIgnoreCreation && !shouldIgnoreUpdate) {
-                var first_letter = attribute.name.charAt(0).toUpperCase();
-                var remaining_letters = attribute.name.slice(1);
-                var new_attribute_name = first_letter + remaining_letters;
-                html += "\n                <label>".concat(new_attribute_name, ": \n                <input type=\"").concat(typeMap[attribute.type], "\" \n                      value={").concat(attribute.name, "} \n                      onChange={(e) => set").concat(new_attribute_name, "(e.target.value)} \n                      required />\n                </label>\n");
+                const first_letter = attribute.name.charAt(0).toUpperCase()
+                const remaining_letters = attribute.name.slice(1)
+                const new_attribute_name = first_letter + remaining_letters
+
+                html += `
+                <label>${new_attribute_name}: 
+                <input type="${typeMap[attribute.type]}" 
+                      value={${attribute.name}} 
+                      onChange={(e) => set${new_attribute_name}(e.target.value)} 
+                      required />
+                </label>\n`;
             }
         });
     });
-    html += "\n          <button type=\"submit\">Register</button>\n        </form>\n      </div>\n    );\n};\n\nexport default RegistrationForm;\n";
-    var outputFilePath = path.join('.', 'Form.jsx'); //Let the user choose his form file
-    fs.writeFileSync(outputFilePath, html);
-    console.log("Generated HTML form saved to: ".concat(outputFilePath));
+
+    html += `
+          <button type="submit">Register</button>
+        </form>
+      </div>
+    );
 };
-exports.createReactForm = createReactForm;
+
+export default RegistrationForm;
+`;
+
+    const outputFilePath = path.join('.', `${form}.jsx`); //Let the user choose his form file
+    fs.writeFileSync(outputFilePath, html);
+    console.log(`Generated React form saved to: ${outputFilePath}`);
+}
+
+export default createReactForm;
