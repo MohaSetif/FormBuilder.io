@@ -1,6 +1,10 @@
 #!usr/bin/env node
 
-import inquirer from 'inquirer';
+import inquirer from 'inquirer'
+import boxen from 'boxen'
+import figlet from 'figlet'
+
+const sleep = (ms = 2000) => new Promise((r) => setTimeout(r, ms))
 
 async function getSchema() {
     const questions = [
@@ -8,7 +12,6 @@ async function getSchema() {
             type: 'input',
             name: 'schema_path',
             message: 'Enter the path for the schema:',
-            default: './prisma/User.prisma'
         },
         {
             type: 'input',
@@ -16,19 +19,44 @@ async function getSchema() {
             message: 'Enter the destination for the form:'
         },
         {
-            type: 'input',
+            type: 'list',
             name: 'frmwork_dev',
-            message: 'Enter the development framework:'
+            message: 'Enter the development framework:',
+            choices: [
+                'React',
+                'Vue',
+                'Svelte'
+            ]
+        }, {
+            type: 'list',
+            name: 'frmwork_lang',
+            message: 'Enter the development language: ',
+            choices: [
+                'JavaScript',
+                'TypeScript'
+            ],
+            when: (answers) => answers.frmwork_dev === 'React'
         }
-    ];
+    ]
 
-    const answers = await inquirer.prompt(questions);
-    return answers;
+    const answers = await inquirer.prompt(questions)
+    return answers
 }
 
 async function main() {
-    const answers = await getSchema();
-    console.log('Answers:', answers);
+    await sleep()
+    await getSchema()
+    console.log(boxen('You have now generated your form successfully!', 
+    {title: 'Congrats', titleAlignment: 'center', padding: 1, borderColor: 'cyan'}))
 }
 
-main();
+figlet("FormBuilder.io", function (err, data) {
+    if (err) {
+      console.log("Something went wrong...")
+      console.dir(err)
+      return
+    }
+    console.log(data)
+  })
+
+main()
