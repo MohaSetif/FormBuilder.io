@@ -1,13 +1,13 @@
 import * as path from "path";
 import * as fs from 'fs';
 
-export const createVueForm = (models, form) => {
+export const createVueForm = (model, form) => {
     let html = `
     <template>
         <div>
             <form @submit.prevent="handleSubmit">`;
 
-    models.forEach(model => {
+
         html += `\n\t\t<h2>Model: ${model.name}</h2>`;
 
         model.attributes.forEach(attribute => {
@@ -32,7 +32,7 @@ export const createVueForm = (models, form) => {
                 }
             }
         });
-    });
+
 
     html += `
                 <button type="submit">Register</button>
@@ -45,7 +45,6 @@ export const createVueForm = (models, form) => {
         data() {
             return {`;
 
-    models.forEach(model => {
         model.attributes.forEach(attribute => {
             const shouldIgnoreCreation = /^(created)?at$/i.test(attribute.name);
             const shouldIgnoreUpdate = /^(updated)?at$/i.test(attribute.name);
@@ -55,7 +54,6 @@ export const createVueForm = (models, form) => {
                 ${attribute.name}: '',`;
             }
         });
-    });
 
     html += `
             };
@@ -69,15 +67,13 @@ export const createVueForm = (models, form) => {
                     },
                     body: JSON.stringify({`;
 
-    models.forEach((model, index) => {
         model.attributes.forEach((attribute, idx) => {
             html += `${attribute.name}: this.${attribute.name}`;
 
-            if (index !== models.length - 1 || idx !== model.attributes.length - 1) {
+            if (idx !== model.attributes.length - 1) {
                 html += ',\n\t\t\t\t\t\t';
             }
         });
-    });
 
     html += `
                     }),

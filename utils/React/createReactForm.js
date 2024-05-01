@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from 'fs';
 
-const createReactForm = (models, form) => {
+const createReactForm = (model, form) => {
     let html = `import React, { useState } from 'react';
 
 const RegistrationForm = () => {
@@ -9,7 +9,6 @@ const RegistrationForm = () => {
     
     const processedAttributes = new Set();
 
-    models.forEach(model => {
         model.attributes.forEach(attribute => {
             const typeMap = {
                 String: "text",
@@ -32,7 +31,6 @@ const RegistrationForm = () => {
                 processedAttributes.add(attribute.name);
             }
         });
-    });
 
     html += `
     const handleSubmit = async (e) => {
@@ -45,18 +43,16 @@ const RegistrationForm = () => {
           },
           body: JSON.stringify({`;
 
-    models.forEach((model, index) => {
         html += '\n'
         model.attributes.forEach((attribute, idx) => {
             html += '\t\t\t\t\t\t\t'
             html += `${attribute.name}: ${attribute.name}`;
 
-            if (index !== models.length - 1 || idx !== model.attributes.length - 1) {
+            if (idx !== model.attributes.length - 1) {
                 html += ',';
                 html += '\n'
             }
         });
-    });
 
     html += `
             }),
@@ -75,7 +71,6 @@ const RegistrationForm = () => {
         <form onSubmit={handleSubmit}>
     `;
 
-    models.forEach(model => {
         model.attributes.forEach(attribute => {
             const typeMap = {
                 String: "text",
@@ -102,7 +97,6 @@ const RegistrationForm = () => {
                 </label>\n`;
             }
         });
-    });
 
     html += `
           <button type="submit">Register</button>

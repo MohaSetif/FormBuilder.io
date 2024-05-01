@@ -1,11 +1,10 @@
 import * as path from "path";
 import * as fs from 'fs';
 
-const createSvelteForm = (models, form) => {
+const createSvelteForm = (model, form) => {
     let html = `<script>
     `;
 
-    models.forEach(model => {
         model.attributes.forEach(attribute => {
             html += `let ${attribute.name} = `;
             const typeMap = {
@@ -19,7 +18,6 @@ const createSvelteForm = (models, form) => {
             html += typeMap[attribute.type];
             html += `;\n`;
         });
-    });
 
     html += `
     const handleSubmit = async () => {
@@ -30,15 +28,13 @@ const createSvelteForm = (models, form) => {
         },
         body: JSON.stringify({`;
 
-    models.forEach((model, index) => {
         model.attributes.forEach((attribute, idx) => {
             html += `${attribute.name}`;
 
-            if (index !== models.length - 1 || idx !== model.attributes.length - 1) {
+            if (idx !== model.attributes.length - 1) {
                 html += ', ';
             }
         });
-    });
 
     html += `}),
       });
@@ -55,7 +51,6 @@ const createSvelteForm = (models, form) => {
     <h1>Registration Form</h1>
     <form on:submit|preventDefault={handleSubmit}>`;
 
-    models.forEach(model => {
         model.attributes.forEach(attribute => {
             html += `\n      <label>\n        ${attribute.name}:\n        <input bind:value={${attribute.name}} type="${attribute.type === 'Boolean' ? 'checkbox' : attribute.type.toLowerCase()}" `;
             if (attribute.type === 'Boolean') {
@@ -63,7 +58,6 @@ const createSvelteForm = (models, form) => {
             }
             html += `required />\n      </label>`;
         });
-    });
 
     html += `
       <button type="submit">Register</button>

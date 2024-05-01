@@ -5,6 +5,13 @@ export default function parsePrismaSchema(filePath) {
     const schema = fs.readFileSync(filePath, 'utf-8');
     const models = []
     let currentModel = null;
+    const typeMap = {
+        String: "text",
+        Int: "number",
+        Float: "number",
+        DateTime: "date",
+        Boolean: "checkbox",
+    };
     const lines = schema.split('\n')
     let isInside = false;
 
@@ -27,10 +34,14 @@ export default function parsePrismaSchema(filePath) {
         else if(!trimmed_line.startsWith('//') && currentModel && isInside && trimmed_line){
             const attribute_line = trimmed_line.replace(/[{?}]/g, '')
             const [attribute_name, attribute_type] = attribute_line.split(/\s+/);
+            if(typeMap[attribute_type])
             currentModel.attributes.push({
                 name: attribute_name,
                 type: attribute_type
             })
+            else{
+                continue
+            }
         }
     }
 

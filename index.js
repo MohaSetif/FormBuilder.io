@@ -1,4 +1,4 @@
-#!usr/bin/env node
+#!/usr/bin/env node
 
 import fs from 'fs';
 import path from 'path';
@@ -16,21 +16,19 @@ const sleep = (ms = 2000) => new Promise((r) => setTimeout(r, ms));
 async function scanPrismaSchemas(rootDir) {
     const prismaFiles = [];
 
-    // Function to recursively scan directories
     async function scanDirectory(dir) {
         const files = await fs.promises.readdir(dir);
         for (const file of files) {
             const filePath = path.join(dir, file);
             const stats = await fs.promises.stat(filePath);
             if (stats.isDirectory()) {
-                await scanDirectory(filePath); // Recursively scan directories
+                await scanDirectory(filePath);
             } else if (path.extname(filePath) === '.prisma') {
-                prismaFiles.push(filePath); // Collect Prisma schema files
+                prismaFiles.push(filePath);
             }
         }
     }
 
-    // Start scanning from the root directory
     await scanDirectory(rootDir);
 
     return prismaFiles;
@@ -50,8 +48,22 @@ async function selectPrismaSchema(files) {
     return answers.selectedSchema;
 }
 
+async function selectModel(models) {
+    const questions = [
+        {
+            type: 'list',
+            name: 'selectedModel',
+            message: 'Choose a model:',
+            choices: models.map(model => model.name),
+        },
+    ];
+
+    const answers = await inquirer.prompt(questions);
+    return answers.selectedModel;
+}
+
 async function getSchema() {
-    const rootDir = process.cwd(); // Current working directory
+    const rootDir = process.cwd();
     const prismaFiles = await scanPrismaSchemas(rootDir);
 
     if (prismaFiles.length === 0) {
@@ -60,13 +72,15 @@ async function getSchema() {
     }
 
     const selectedSchema = await selectPrismaSchema(prismaFiles);
-    const form_dest = await inquirer.prompt({
+    const models = parsePrismaSchema(selectedSchema);
+    const selectedModel = await selectModel(models);
+    const formDest = await inquirer.prompt({
         type: 'input',
-        name: 'form_dest',
+        name: 'formDest',
         message: 'Enter the destination for the form:'
     });
 
-    return { schema_path: selectedSchema, form_dest: form_dest.form_dest };
+    return { schemaPath: selectedSchema, modelName: selectedModel, formDest: formDest.formDest };
 }
 
 async function main() {
@@ -77,7 +91,12 @@ async function main() {
         return; // No Prisma schema files found
     }
 
-    const models = parsePrismaSchema(answers.schema_path);
+    const { schemaPath, modelName, formDest } = answers;
+    const models = parsePrismaSchema(schemaPath);
+    
+    // Find the selected model
+    const selectedModel = models.find(model => model.name === modelName);
+
     const frameworkDev = await inquirer.prompt({
         type: 'list',
         name: 'frmwork_dev',
@@ -101,14 +120,14 @@ async function main() {
         });
 
         if (frameworkLang.frmwork_lang === 'JavaScript') {
-            createReactForm(models, answers.form_dest);
+            createReactForm(selectedModel, formDest);
         } else {
-            createReactForm_ts(models, answers.form_dest);
+            createReactForm_ts(selectedModel, formDest);
         }
     } else if (frameworkDev.frmwork_dev === 'Vue') {
-        createVueForm(models, answers.form_dest);
+        createVueForm(selectedModel, formDest);
     } else {
-        createSvelteForm(models, answers.form_dest);
+        createSvelteForm(selectedModel, formDest);
     }
 
     console.log(boxen('You have now generated your form successfully!', 
