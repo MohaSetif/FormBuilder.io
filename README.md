@@ -11,39 +11,37 @@ FormBuilder.io is a CLI tool designed to generate HTML, React, Vue, and Svelte f
 
 ## Installation
 
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/yourusername/FormBuilder.io.git
-    cd FormBuilder.io
-    ```
+You can install FormBuilder.io using npm:
 
-2. Install dependencies:
-    ```sh
-    npm install
-    ```
+```sh
+npm i @mohasetif/formbuilder.io
+```
 
 ## Usage
 
-1. Run the CLI tool:
-    ```sh
-    node index.js
-    ```
-
-2. Follow the prompts:
-    - Choose a Prisma schema file.
-    - Select a model from the chosen schema.
-    - Enter the destination file name for the generated form.
-    - Choose the development framework (HTML, React, Vue, or Svelte).
-
-3. The generated form will be saved to the specified destination.
-
-## Example
+    Run the CLI tool:
 
 ```sh
-$ node index.js
 
+npx @mohasetif/formbuilder.io
+```
 
+    Follow the prompts:
+        Choose a Prisma schema file.
+        Select a model from the chosen schema.
+        Enter the destination file name for the generated form.
+        Choose the development framework (HTML, React, Vue, or Svelte).
 
+    The generated form will be saved to the specified destination.
+
+# Example:
+
+```sh
+
+$ npx @mohasetif/formbuilder.io
+```
+
+# Output:
  _____                    ____        _ _     _           _       
  |  ___|__  _ __ _ __ ___ | __ ) _   _(_) | __| | ___ _ __(_) ___  
  | |_ / _ \| '__| '_ ` _ \|  _ \| | | | | |/ _` |/ _ \ '__| |/ _ \ 
@@ -54,3 +52,5 @@ $ node index.js
 ? Choose a model: User
 ? Enter the file destination for the form: UserForm
 ? Enter the development framework: No Framework (HTML)
+
+The generated form will be saved as UserForm.html.
