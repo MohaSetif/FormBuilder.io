@@ -1,5 +1,5 @@
 {
-  "name": "formbuilder.io",
+  "name": "@mohasetif/formbuilder.io",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
@@ -7,9 +7,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "formbuilder.io": "./index.js"
+  },
   "author": "mohasetif",
   "license": "ISC",
   "dependencies": {
+    "@mohasetif/formbuilder.io": "^1.0.0",
     "boxen": "^7.1.1",
     "chalk": "^5.3.0",
     "chalk-animation": "^2.0.3",
