@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@mohasetif/formbuilder.io':
-    specifier: ^1.0.0
-    version: 1.0.0
   boxen:
     specifier: ^7.1.1
     version: 7.1.1
@@ -73,18 +70,6 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       call-bind: 1.0.7
-    dev: false
-
-  /@mohasetif/formbuilder.io@1.0.0:
-    resolution: {integrity: sha512-Ee4qSbykVIEU0pdN+u1mFzE4JdeG1YsAf0D94Y2PMXyKq/eavNd2cWJU5DdkFAxyDPj/yiItMizSDwbHOec5sg==}
-    dependencies:
-      boxen: 7.1.1
-      chalk: 5.3.0
-      chalk-animation: 2.0.3
-      figlet: 1.7.0
-      fs: 0.0.1-security
-      gradient-string: 2.0.2
-      inquirer: 9.2.20
     dev: false
 
   /@types/inquirer@9.0.7:
