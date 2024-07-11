@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from 'fs';
 
-export const createForm = (model, form) => {
+const createForm = (model, form) => {
     let html = `<!DOCTYPE html>
     <html lang="en">
         <form method='post' action=''>`;
@@ -44,3 +44,5 @@ export const createForm = (model, form) => {
     fs.writeFileSync(outputFilePath, html);
     console.log(`Generated HTML form saved to: ${outputFilePath}`);
 }
+
+export default createForm
