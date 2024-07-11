@@ -19,30 +19,25 @@ npm i @mohasetif/formbuilder.io
 
 ## Usage
 
-    Run the CLI tool:
+1- Before you run the following command, make sure you placed your prisma schemas in a prisma folder:
 
 ```sh
-
 npx @mohasetif/formbuilder.io
 ```
 
-    Follow the prompts:
-        Choose a Prisma schema file.
-        Select a model from the chosen schema.
-        Enter the destination file name for the generated form.
-        Choose the development framework (HTML, React, Vue, or Svelte).
+2- Follow the prompts:
 
-    The generated form will be saved to the specified destination.
+    Choose a Prisma schema file.
+    Select a model from the chosen schema.
+    Enter the destination file name for the generated form.
+    Choose the development framework (HTML, React, Vue, or Svelte).
 
-# Example:
+3- The generated form will be saved to the specified destination.
 
-```sh
 
-$ npx @mohasetif/formbuilder.io
+## Output
 ```
-
-# Output:
- _____                    ____        _ _     _           _       
+  _____                    ____        _ _     _           _       
  |  ___|__  _ __ _ __ ___ | __ ) _   _(_) | __| | ___ _ __(_) ___  
  | |_ / _ \| '__| '_ ` _ \|  _ \| | | | | |/ _` |/ _ \ '__| |/ _ \ 
  |  _| (_) | |  | | | | | | |_) | |_| | | | (_| |  __/ |_ | | (_) |
@@ -53,4 +48,4 @@ $ npx @mohasetif/formbuilder.io
 ? Enter the file destination for the form: UserForm
 ? Enter the development framework: No Framework (HTML)
 
-The generated form will be saved as UserForm.html.
+```
