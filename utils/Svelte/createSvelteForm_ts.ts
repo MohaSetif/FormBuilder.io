@@ -1,10 +1,21 @@
 import * as path from "path";
 import * as fs from 'fs';
 
-const createSvelteForm = (model, formDest) => {
+interface Attribute {
+  name: string;
+  type: string;
+  optional: boolean;
+}
+
+interface Model {
+  name: string;
+  attributes: Attribute[];
+}
+
+const createSvelteForm_ts = (model: Model, formDest: string): void => {
   const { name, attributes } = model;
 
-  const getInputType = (type) => {
+  const getInputType = (type: string): string => {
     switch (type) {
       case 'String': return 'text';
       case 'Int':
@@ -15,7 +26,7 @@ const createSvelteForm = (model, formDest) => {
     }
   };
 
-  const getDefaultValue = (type) => {
+  const getDefaultValue = (type: string): string => {
     switch (type) {
       case 'String': return "''";
       case 'Int': return '0';
@@ -26,15 +37,30 @@ const createSvelteForm = (model, formDest) => {
     }
   };
 
+  const getTypeScriptType = (type: string): string => {
+    switch (type) {
+      case 'String': return 'string';
+      case 'Int':
+      case 'Float': return 'number';
+      case 'Boolean': return 'boolean';
+      case 'DateTime': return 'string';
+      default: return 'any';
+    }
+  };
+
   const formContent = `
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{submit: ${name}FormData}>();
 
-  ${attributes.map(attr => `let ${attr.name} = ${getDefaultValue(attr.type)};`).join('\n  ')}
+  interface ${name}FormData {
+    ${attributes.map(attr => `${attr.name}${attr.optional ? '?' : ''}: ${getTypeScriptType(attr.type)};`).join('\n    ')}
+  }
 
-  $: formData = {
+  ${attributes.map(attr => `let ${attr.name}: ${getTypeScriptType(attr.type)} = ${getDefaultValue(attr.type)};`).join('\n  ')}
+
+  $: formData: ${name}FormData = {
     ${attributes.map(attr => attr.name).join(',\n    ')}
   };
 
@@ -71,7 +97,7 @@ const createSvelteForm = (model, formDest) => {
   const outputPath = path.join(process.cwd(), formDest, `${name}Form.svelte`);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, formContent);
-  console.log(`Generated Svelte form saved to: ${outputPath}`);
+  console.log(`Generated Svelte TypeScript form saved to: ${outputPath}`);
 };
 
-export default createSvelteForm;
+export default createSvelteForm_ts;

@@ -10,7 +10,9 @@ import createHTMLForm from "./utils/HTML/createForm.js"
 import createReactForm from './utils/React/createReactForm.js'
 import createReactForm_ts from './utils/React/createReactForm_ts.js'
 import createVueForm from './utils/Vue/createVueForm.js'
+import createVueForm_ts from './utils/Vue/createVueForm_ts.js'
 import createSvelteForm from './utils/Svelte/createSvelteForm.js'
+import createSvelteForm_ts from './utils/Svelte/createSvelteForm_ts.js'
 
 const sleep = (ms = 2000) => new Promise((r) => setTimeout(r, ms))
 
@@ -78,7 +80,7 @@ async function getSchema() {
     const formDest = await inquirer.prompt({
         type: 'input',
         name: 'formDest',
-        message: 'Enter the file destination for the form:'
+        message: 'Enter the folder destination for the generated form:'
     })
 
     return { schemaPath: selectedSchema, modelName: selectedModel, formDest: formDest.formDest }
@@ -130,9 +132,37 @@ async function main() {
             createReactForm_ts(selectedModel, formDest)
         }
     } else if (frameworkDev.frmwork_dev === 'Vue') {
-        createVueForm(selectedModel, formDest)
+        const frameworkLang = await inquirer.prompt({
+            type: 'list',
+            name: 'frmwork_lang',
+            message: 'Enter the development language: ',
+            choices: [
+                'JavaScript',
+                'TypeScript'
+            ]
+        })
+
+        if (frameworkLang.frmwork_lang === 'JavaScript') {
+            createVueForm(selectedModel, formDest)
+        } else {
+            createVueForm_ts(selectedModel, formDest)
+        }
     } else {
-        createSvelteForm(selectedModel, formDest)
+        const frameworkLang = await inquirer.prompt({
+            type: 'list',
+            name: 'frmwork_lang',
+            message: 'Enter the development language: ',
+            choices: [
+                'JavaScript',
+                'TypeScript'
+            ]
+        })
+
+        if (frameworkLang.frmwork_lang === 'JavaScript') {
+            createSvelteForm(selectedModel, formDest)
+        } else {
+            createSvelteForm_ts(selectedModel, formDest)
+        }
     }
 
     console.log(boxen('You have now generated your form successfully!', 

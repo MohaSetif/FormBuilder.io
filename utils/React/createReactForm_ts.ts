@@ -1,11 +1,22 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const createReactForm = (model, formDest) => {
+interface Attribute {
+  name: string;
+  type: string;
+  optional: boolean;
+}
+
+interface Model {
+  name: string;
+  attributes: Attribute[];
+}
+
+const createReactForm_ts = (model: Model, formDest: string): void => {
   const { name, attributes } = model;
 
-  function getValidationRules(attr) {
-    const rules = {};
+  function getValidationRules(attr: Attribute): string {
+    const rules: Record<string, any> = {};
     if (!attr.optional) {
       rules.required = 'This field is required';
     }
@@ -18,13 +29,13 @@ const createReactForm = (model, formDest) => {
         rules.min = { value: 0, message: 'Value must be positive' };
         break;
       case 'DateTime':
-        rules.validate = (value) => !isNaN(Date.parse(value)) || 'Invalid date';
+        rules.validate = '(value) => !isNaN(Date.parse(value)) || "Invalid date"';
         break;
     }
-    return JSON.stringify(rules);
+    return JSON.stringify(rules).replace('"(value)', '(value').replace(')"', ')');
   }
 
-  function getInputType(type) {
+  function getInputType(type: string): string {
     switch (type) {
       case 'String': return 'text';
       case 'Int': return 'number';
@@ -35,14 +46,24 @@ const createReactForm = (model, formDest) => {
     }
   }
 
-  function generateFormField(attr) {
+  function getTypeScriptType(type: string): string {
+    switch (type) {
+      case 'String': return 'string';
+      case 'Int':
+      case 'Float': return 'number';
+      case 'Boolean': return 'boolean';
+      case 'DateTime': return 'string'; // Use string for datetime-local input
+      default: return 'any';
+    }
+  }
+
+  function generateFormField(attr: Attribute): string {
     if (attr.type === 'Boolean') {
       return `
         <div key="${attr.name}">
           <label htmlFor="${attr.name}">
             <input
               id="${attr.name}"
-              name="${attr.name}"
               type="checkbox"
               {...register("${attr.name}", ${getValidationRules(attr)})}
             />
@@ -57,7 +78,6 @@ const createReactForm = (model, formDest) => {
         <label htmlFor="${attr.name}">${attr.name}</label>
         <input
           id="${attr.name}"
-          name="${attr.name}"
           {...register("${attr.name}", ${getValidationRules(attr)})}
           type="${getInputType(attr.type)}"
         />
@@ -67,12 +87,16 @@ const createReactForm = (model, formDest) => {
 
   const formContent = `
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
-export const ${name}Form = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+interface ${name}FormData {
+  ${attributes.map(attr => `${attr.name}${attr.optional ? '?' : ''}: ${getTypeScriptType(attr.type)};`).join('\n  ')}
+}
 
-  const onSubmit = async (data) => {
+export const ${name}Form: React.FC = () => {
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<${name}FormData>();
+
+  const onSubmit: SubmitHandler<${name}FormData> = async (data) => {
     try {
       // Replace with your API call
       console.log(data);
@@ -94,10 +118,10 @@ export const ${name}Form = () => {
 };
   `;
 
-  const outputPath = path.join(process.cwd(), formDest, `${name}Form.jsx`);
+  const outputPath = path.join(process.cwd(), formDest, `${name}Form.tsx`);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, formContent);
-  console.log(`Generated React form saved to: ${outputPath}`);
+  console.log(`Generated React TypeScript form saved to: ${outputPath}`);
 };
 
-export default createReactForm;
+export default createReactForm_ts;
